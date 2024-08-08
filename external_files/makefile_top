@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# TODO: temporary, needs to be set by a project_config
+DOCUMENT			:= document
+
 # LATEX/PANDOC DOCKER SWITCH
 # if docker images are set up for running latex, revert to those.  Otherwise 
 # invoke latexmk/docker natively
@@ -8,30 +11,36 @@ LATEX_DOCKER		:= texdock
 LATEX_PREFIX		:= $(shell which ${LATEX_DOCKER} >/dev/null && echo "${LATEX_DOCKER} ")
 LATEX				:= ${LATEX_PREFIX} latexmk
 
-TEX_ENGINE			:= -_T_TEX_ENGINE_T_
+# TODO: this is supposed to come from a project_config file, once that is 
+# implemented
+TEX_ENGINE			:= pdflatex
+
+SCRIPT_INCLUDE_CHAPTERS	:= ${DIR_SCRIPTS}/include_chapters.py
 
 
 ############################################################
 # VARIABLES
 ############################################################
 
-SRC_TEX				:= $(wildcard _T_DIR_SRC_T_/*/*.tex)
-DIR_TEX_OUT			:= _T_DIR_TEXMK_OUT_T_
+DIR_SRC				:= src
+
+SRC_TEX				:= $(wildcard ${DIR_SRC}/*/*.tex)
+DIR_TEX_OUT			:= tex_out
 
 
 ############################################################
 # TARGETS
 ############################################################
 
-all: _T_DOC_NAME_T_.pdf
+all: ${DOCUMENT}.pdf
 
-_T_DOC_NAME_T_.pdf:	${SRC_TEX} include_chapters
+${DOCUMENT}.pdf:	${SRC_TEX} include_chapters
 	@echo "Creating the document..."
-	${LATEX} -output-directory=${DIR_TEX_OUT} -_T_TEX_ENGINE_T_ _T_FILE_TEX_MAIN_BASE_T_.tex
-	@cp ${DIR_TEX_OUT}/_T_FILE_TEX_MAIN_BASE_T_.pdf _T_DOC_NAME_T_.pdf
+	${LATEX} -output-directory=${DIR_TEX_OUT} -${TEX_ENGINE} main.tex
+	@cp ${DIR_TEX_OUT}/main.pdf ${DOCUMENT}.pdf
 
 .PHONY: include_chapters
 include_chapters:	${SRC_TEX}
 	@echo "Scanning for chapters..."
-	@python3 _T_SCRIPT_INCLUDE_CHAPTERS_T_
+	@python3 ${SCRIPT_INCLUDE_CHAPTERS}
 
