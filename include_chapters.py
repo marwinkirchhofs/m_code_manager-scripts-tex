@@ -63,7 +63,7 @@ def write_chapter_include_file(chapters):
 
 def main():
     # DETECT CHAPTERS
-    chapters_unordered = [ch for ch in os.listdir("src/{ch}")]
+    chapters_unordered = [ch for ch in os.listdir("src") if os.path.isdir(f"src/{ch}")]
 
     # FINAL CHAPTER LIST IN ORDER
     # 1. take every entry from the order file as the first chapters
