@@ -45,6 +45,7 @@ def write_chapter_file(chapter, chapter_folder=""):
 """)
 
         files_sections = glob.glob(f"src/{chapter_folder}/*.tex")
+        files_sections.sort()
         for file_section in files_sections:
             f_chapter.write("\input{" + file_section+ "}\n")
 
